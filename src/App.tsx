@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from 'react'
+import { useState, useEffect, KeyboardEvent } from 'react'
 import './App.css'
 
 interface Task {
@@ -37,8 +37,15 @@ function TaskItem({
 }
 
 export default function App() {
-  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const saved = localStorage.getItem('tasks')
+    return saved ? (JSON.parse(saved) as Task[]) : []
+  })
   const [input, setInput] = useState('')
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+  }, [tasks])
 
   const addTask = () => {
     const text = input.trim()
